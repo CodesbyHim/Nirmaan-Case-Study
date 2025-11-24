@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Student Intro Scoring Tool</title>
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-4">
+<div class="container">
+  <h2>Nirmaan – Self Introduction Scorer</h2>
+  <p>Paste the transcript and enter speaking duration in seconds.</p>
+
+  <form id="scoreForm">
+    <div class="form-group">
+      <label for="transcript">Transcript</label>
+      <textarea id="transcript" name="transcript" rows="8"
+                class="form-control"
+                placeholder="Paste student introduction here..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="duration">Duration (seconds)</label>
+      <input type="number" step="0.1" id="duration" name="duration"
+             class="form-control" placeholder="e.g. 52">
+    </div>
+    <button id="scoreBtn" class="btn btn-primary">Score</button>
+  </form>
+
+  <hr>
+  <div id="result"></div>
+</div>
+
+<script>
+document.getElementById("scoreForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const res = await fetch("/score", {
+    method: "POST",
+    body: formData
+  });
+  const data = await res.json();
+  const out = document.getElementById("result");
+
+  if (!res.ok) {
+    out.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+    return;
+  }
+
+  out.innerHTML = `<h4>Overall score: ${data.overall_score}</h4>`;
+});
+</script>
+</body>
+</html>
